@@ -33,4 +33,24 @@ public class Trainer {
             }
         }
     }
+
+    public double testing(List<Observation> testSet) {
+        double accuracy = 0;
+        for (Observation observation : testSet) {
+            int d;
+            if (observation.getType().equals("Iris-setosa")) {
+                d = 1;
+            } else {
+                d = 0;
+            }
+
+            int y = perceptron.Output(observation.getData());
+
+            if(d == y){
+                accuracy +=1;
+            }
+
+        }
+        return accuracy/testSet.size();
+    }
 }
