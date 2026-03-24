@@ -12,19 +12,21 @@ public class Trainer {
         this.perceptron = perceptron;
     }
 
+    public int getExpected(Observation observation) {
+        return observation.getType().equals("Iris-virginica") ? 1 : 0;
+    }
+
+    public boolean isVirginica(Observation observation) {
+        return observation.getType().equals("Iris-virginica");
+    }
+
     public void learn() {
 
         for (int i = 0; i < 100; i++) {
 
             for (Observation observation : observations) {
 
-                int d;
-                if (observation.getType().equals("Iris-setosa")) {
-                    d = 1;
-                } else {
-                    d = 0;
-                }
-
+                int d = getExpected(observation);
                 int y = perceptron.Output(observation.getData());
                 if (d != y) {
                     perceptron.deltaRule(observation.getData(), d, y, a);
@@ -34,23 +36,39 @@ public class Trainer {
         }
     }
 
-    public double testing(List<Observation> testSet) {
-        double accuracy = 0;
-        for (Observation observation : testSet) {
-            int d;
-            if (observation.getType().equals("Iris-setosa")) {
-                d = 1;
-            } else {
-                d = 0;
-            }
+    public void testing(List<Observation> testSet) {
 
+        double accuracy = 0;
+        double virginicaCorrect = 0;
+        double versicolorCorrect = 0;
+        int virginicaTotal = 0;
+        int versicolorTotal = 0;
+
+        for (Observation observation : testSet) {
+
+            int d = getExpected(observation);
             int y = perceptron.Output(observation.getData());
 
-            if(d == y){
-                accuracy +=1;
+            if (isVirginica(observation)) {
+                virginicaTotal++;
+            } else {
+                versicolorTotal++;
             }
 
+            if (d == y) {
+                accuracy++;
+
+                if (isVirginica(observation)) {
+                    virginicaCorrect++;
+                } else {
+                    versicolorCorrect++;
+                }
+            }
         }
-        return accuracy/testSet.size();
+
+        System.out.println("Accuracy: " + accuracy/testSet.size());
+        System.out.println("Virginica accuracy: " + virginicaCorrect/virginicaTotal);
+        System.out.println("Versicolor accuracy: " + versicolorCorrect/versicolorTotal);
+
     }
 }
